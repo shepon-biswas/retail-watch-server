@@ -26,13 +26,14 @@ async function run() {
     await client.connect();
 
     const productCollection = client.db("retailWatchDB").collection("products");
+    const cartCollection = client.db("retailWatchDB").collection("carts");
 
     // Get all products
     app.get("/products", async (req, res) => {
       const result = await productCollection.find().toArray();
       res.send(result);
     });
-    
+
     // Get a single product details
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
@@ -40,6 +41,14 @@ async function run() {
       const result = await productCollection.findOne(query);
       res.send(result);
     });
+
+    // cart collection 
+    app.post("/carts", async(req, res)=>{
+      const item = req.body;
+      const result = await cartCollection.insertOne(item);
+      res.send(result)
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
